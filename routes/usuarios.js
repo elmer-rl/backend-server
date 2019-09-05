@@ -20,9 +20,13 @@ let Usuario = require('../models/usuario')
 //===========================================
 
 app.get('/', (req, res, next) =>{
+    let desde = req.query.desde || 0;
+    desde = Number(desde);
 
 Usuario.find({ }, 'nombre email img role')
-           .exec(
+            .skip(desde )
+            .limit(5)
+            .exec(
         (err, usuarios)=>{
         if(err){
             return res.status(500).json({
@@ -32,10 +36,15 @@ Usuario.find({ }, 'nombre email img role')
             });;
         }
 
-        res.status(200).json({
-            ok:true,
-            usuarios: usuarios
-        });
+        Usuario.count({},(err, conteo)=>{
+            res.status(200).json({
+                ok:true,
+                usuarios: usuarios,
+                total:conteo
+            });
+        })
+
+       
 
     })
 

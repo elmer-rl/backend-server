@@ -13,11 +13,17 @@ let app = express();
 app.use(bodyparser.urlencoded({extended: false}))
 app.use(bodyparser.json());
 
+
 // IMPORTAR RUTAS
 
 let appRoutes = require('./routes/app');
+let hospitalRoutes = require('./routes/hospital');
+let medicoRoutes = require('./routes/medico');
 let usuarioRoutes = require('./routes/usuarios');
 let loginRoutes = require('./routes/login');
+let busquedaRoutes = require('./routes/busqueda');
+let uploadRoutes = require('./routes/upload');
+let imagenesdRoutes = require('./routes/imagenes');
 
 // CONEXION A BASE DE DATOSK
 mongoose.connection.openUri('mongodb://localhost:27017/hospitalDB',(err, res) =>{
@@ -27,9 +33,21 @@ mongoose.connection.openUri('mongodb://localhost:27017/hospitalDB',(err, res) =>
 });
 
 
+// serve index config
+
+let serveIndex = require('serve-index');
+app.use(express.static(__dirname + '/'))
+app.use('/uploads', serveIndex(__dirname + '/uploads'));
+
+
 // RUTAS
 app.use('/usuario', usuarioRoutes);
 app.use('/login', loginRoutes);
+app.use('/hospital', hospitalRoutes);
+app.use('/medico', medicoRoutes);
+app.use('/busqueda', busquedaRoutes);
+app.use('/upload', uploadRoutes);
+app.use('/img', imagenesdRoutes);
 app.use('/', appRoutes);
 
 // ESCUCHAR PETICIONES
